@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { HomeModule } from './home/home.module';
 import { User } from './user/entities/user.entity';
@@ -24,14 +22,14 @@ import { UserHomeRelation } from './home/entities/user-home.entity';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
         entities: [User, Home, UserHomeRelation],
-        synchronize: true,
+        synchronize: false,
       }),
       inject: [ConfigService],
     }),
     UserModule, 
     HomeModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

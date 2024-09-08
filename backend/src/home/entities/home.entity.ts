@@ -5,13 +5,13 @@ export class Home {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column({ length: 255, unique: true })
   street_address: string;
 
-  @Column({ nullable: true })
+  @Column({ length: 50, nullable: true })
   state: string;
 
-  @Column({ nullable: true })
+  @Column({ length: 10, nullable: true })
   zip: string;
 
   @Column({ type: 'float', unsigned: true, nullable: true })

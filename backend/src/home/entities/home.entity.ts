@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, VersionColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('home')
 export class Home {
@@ -28,8 +28,4 @@ export class Home {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
-
-  // Version for Optimistic Locking
-  @VersionColumn()
-  version: number;
 }

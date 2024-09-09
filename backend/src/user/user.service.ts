@@ -11,14 +11,30 @@ export class UserService {
   ) {}
 
   async findAll(): Promise<User[]> {
-    return this.userRepository.find();
+    try {
+      return this.userRepository.find();
+    } catch (error) {
+      console.error("error in findAll service : ", error);   
+      throw error;   
+    }
   }
 
   async findByHome(homeId: number): Promise<User[]> {
-    return this.userRepository
-      .createQueryBuilder('user')
-      .innerJoin('user_home_relation', 'uh', 'user.id = uh.user_id')
-      .where('uh.home_id = :homeId', { homeId })
-      .getMany();
+    try {
+      return this.userRepository
+        .createQueryBuilder('user')
+        .innerJoin('user_home_relation', 'uh', 'user.id = uh.user_id')
+        .where('uh.home_id = :homeId', { homeId })
+        .select([
+          'user.id',
+          'user.username',
+          'user.email',
+        ])
+        .orderBy('user.username', 'ASC')
+        .getMany();
+    } catch (error) {
+      console.error("error in findByHome service : ", error);
+      throw error;      
+    }
   }
 }

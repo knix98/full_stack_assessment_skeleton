@@ -288,7 +288,7 @@ docker-compose -f docker-compose.final.yml up --build -d
 ---
 
 ## Tech Stack:
-- **React**
+- **React (Vite)**
 - **Redux Toolkit** for state management
 - **RTK Query** for data fetching
 - **Vanilla CSS** for styling

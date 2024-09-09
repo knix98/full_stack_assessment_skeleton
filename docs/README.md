@@ -129,7 +129,50 @@ docker-compose -f docker-compose.initial.yml up --build -d
 
 ### solution
 
-> explain briefly your solution for this problem here
+# Database Normalization and Optimizations
+
+## Normalization Process
+Previously, the `user_home` table contained denormalized data, leading to redundancy and potential inconsistencies. The solution was to normalize the data into three tables:
+
+1. **user table**:
+   - Contains user-specific information (e.g., `username`, `email`).
+   - Each user has a unique `id`, ensuring updates are handled efficiently.
+
+2. **home table**:
+   - Contains home-specific information (e.g., `street_address`, `beds`, `baths`).
+   - Each home has a unique `id` to prevent redundancy.
+
+3. **user_home_relation table**:
+   - A join table that links `user_id` and `home_id`.
+   - Supports a many-to-many relationship, allowing flexible associations.
+
+### Benefits of Normalization:
+1. **Data Integrity**: Avoids duplication by referencing unique entries for users and homes.
+2. **Efficient Updates**: Simplifies updates to `user_home_relation` without altering core user or home data.
+
+## Optimizations
+1. **Primary Keys**: Added `id (int)` as the primary key for all tables, improving indexing and query performance.
+2. **Unique Keys**: Enforced uniqueness with constraints:
+   - `username` in the user table.
+   - `street_address` in the home table.
+   - `user_home_idx (user_id, home_id)` in the `user_home_relation` table to avoid duplicate entries.
+3. **Unsigned Attributes**: Applied `unsigned` attributes to `int` and `float` columns for a broader numeric range.
+
+## Testing Instructions
+1. Stop the Existing Database Container
+Ensure no conflicts by stopping any running database containers:
+
+```
+docker-compose -f docker-compose.initial.yml down
+```
+
+2. Start the New Database Container
+Build and start the new container using the updated configuration:
+
+```
+docker-compose -f docker-compose.final.yml up --build -d
+```
+
 
 ## 2. React SPA
 
@@ -220,7 +263,55 @@ docker-compose -f docker-compose.initial.yml up --build -d
 
 ### solution
 
-> explain briefly your solution for this problem here
+### Problems Solved:
+1. **User-Homes Association Management**:
+   - Display homes for users: A user dropdown allows viewing homes associated with a selected user.
+   - Edit User-Homes Relationship: A modal allows updating users related to a specific home.
+
+2. **State Management**:
+   - Utilized Redux Toolkit for efficient global state management and RTK Query for API interactions.
+
+3. **Data Fetching & Caching**:
+   - Handled backend API calls with caching, error handling, and loading states using RTK Query.
+   - A skeleton loader is shown while data is fetched from the backend.
+
+4. **Pagination & Performance**:
+   - Implemented pagination for homes associated with a user to handle large datasets.
+   - Improved performance by caching API responses.
+
+5. **Responsive UI**:
+   - Built responsive, card-based home listings, adjusting for various screen sizes.
+
+6. **Error Handling**:
+   - Error page for failed API calls, with a refresh option in case of connection issues or timeouts.
+
+---
+
+## Tech Stack:
+- **React**
+- **Redux Toolkit** for state management
+- **RTK Query** for data fetching
+- **Vanilla CSS** for styling
+- **React-loading-skeleton** for skeleton loading effects
+
+---
+
+## How to Run
+1. Navigate to the frontend directory:
+
+``` 
+cd frontend
+``` 
+2. Install the required dependencies:
+``` 
+npm install
+``` 
+3. Start the application:
+``` 
+npm run dev
+``` 
+4. The frontend server will start running on `http://localhost:3000`.
+
 
 ## 3. Backend API development on Node
 
@@ -281,7 +372,58 @@ docker-compose -f docker-compose.initial.yml up --build -d
 
 ### solution
 
-> explain briefly your solution for this problem here
+### Key APIs and Features:
+
+1. **/user/find-all**:
+   - Fetches all users from the database.
+   - Provides a list of users to populate frontend dropdowns.
+
+2. **/home/find-by-user**:
+   - Returns homes associated with a particular user.
+   - **Pagination**: 
+     - The API uses query parameters `page` and `pageSize` to handle large datasets efficiently, only returning 50 records at a time.
+     - TypeORM's `skip` and `take` methods are used for implementing pagination.
+
+3. **/user/find-by-home**:
+   - Returns all users associated with a given home.
+   - This data is used in the frontend modal for editing home-user associations.
+
+4. **/home/update-users**:
+   - Updates the list of users associated with a home.
+   - **Transaction and Idempotency**: 
+     - Ensures database consistency with **transaction management** by using a `QueryRunner` to handle user-home relationships.
+     - The API first checks the current users associated with a home, then calculates which users need to be added or removed.
+     - Idempotency is maintained by ensuring that if no changes are made (i.e., the user-home relationships remain the same), the operation doesn't result in duplicate entries or unwanted deletions.
+     - Transaction rollback is used in case of errors to ensure that partial updates do not occur.
+
+---
+
+## Tech Stack:
+- **NestJS** for building the RESTful API.
+- **TypeORM** for interacting with the database.
+- **MySQL** as the relational database.
+
+---
+
+## How to Run
+
+1. Ensure that your MySQL database is running and properly connected.
+
+2. Navigate to the backend directory:
+
+``` 
+cd backend
+``` 
+3. Install the required dependencies:
+``` 
+npm install
+``` 
+4. Start the application:
+``` 
+npm run start:dev
+``` 
+5. The backend server will start and listen on the specified port .
+
 
 ## Submission Guidelines
 
